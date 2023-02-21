@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/TylerBrock/saw/blade"
-	"github.com/TylerBrock/saw/config"
+	"github.com/jsonw23/saw/blade"
+	"github.com/jsonw23/saw/config"
 	"github.com/spf13/cobra"
 )
 
@@ -23,11 +23,14 @@ var streamsCommand = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		streamsConfig.Group = args[0]
-		b := blade.NewBlade(&streamsConfig, &awsConfig, nil)
+		b := blade.NewBlade(&streamsConfig, nil, nil)
 
-		logStreams := b.GetLogStreams()
-		for _, stream := range logStreams {
-			fmt.Println(*stream.LogStreamName)
+		if logStreams, err := b.GetLogStreams(); err == nil {
+			for _, stream := range logStreams {
+				fmt.Println(*stream.LogStreamName)
+			}
+		} else {
+			panic(err)
 		}
 	},
 }

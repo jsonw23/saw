@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/TylerBrock/saw/blade"
-	"github.com/TylerBrock/saw/config"
+	"github.com/jsonw23/saw/blade"
+	"github.com/jsonw23/saw/config"
 	"github.com/spf13/cobra"
 )
 
@@ -26,15 +26,18 @@ var watchCommand = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 		watchConfig.Group = args[0]
-		b := blade.NewBlade(&watchConfig, &awsConfig, &watchOutputConfig)
+		b := blade.NewBlade(&watchConfig, nil, &watchOutputConfig)
 		if watchConfig.Prefix != "" {
-			streams := b.GetLogStreams()
-			if len(streams) == 0 {
-				fmt.Printf("No streams found in %s with prefix %s\n", watchConfig.Group, watchConfig.Prefix)
-				fmt.Printf("To view available streams: `saw streams %s`\n", watchConfig.Group)
-				os.Exit(3)
+			if streams, err := b.GetLogStreams(); err != nil {
+				if len(streams) == 0 {
+					fmt.Printf("No streams found in %s with prefix %s\n", watchConfig.Group, watchConfig.Prefix)
+					fmt.Printf("To view available streams: `saw streams %s`\n", watchConfig.Group)
+					os.Exit(3)
+				}
+				watchConfig.Streams = streams
+			} else {
+				panic(err)
 			}
-			watchConfig.Streams = streams
 		}
 		b.StreamEvents()
 	},

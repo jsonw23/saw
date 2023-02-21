@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/TylerBrock/saw/config"
 	"github.com/spf13/cobra"
 )
 
@@ -18,15 +17,10 @@ var SawCommand = &cobra.Command{
 	},
 }
 
-var awsConfig config.AWSConfiguration
-
 func init() {
 	SawCommand.AddCommand(groupsCommand)
 	SawCommand.AddCommand(streamsCommand)
 	SawCommand.AddCommand(versionCommand)
 	SawCommand.AddCommand(watchCommand)
 	SawCommand.AddCommand(getCommand)
-	SawCommand.PersistentFlags().StringVar(&awsConfig.Endpoint, "endpoint-url", "", "override default endpoint URL")
-	SawCommand.PersistentFlags().StringVar(&awsConfig.Region, "region", "", "override profile AWS region")
-	SawCommand.PersistentFlags().StringVar(&awsConfig.Profile, "profile", "", "override default AWS profile")
 }
